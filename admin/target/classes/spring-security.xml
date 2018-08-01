@@ -1,0 +1,71 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/security
+              http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <bean id="customWebInvocationPrivilegeEvaluator" class="org.springframework.security.web.access.DefaultWebInvocationPrivilegeEvaluator">
+        <constructor-arg name="securityInterceptor" ref="filterSecurityInterceptor"/>
+    </bean>
+
+    <!-- 认证管理器,配置了管理员与角色的关系  -->
+    <security:authentication-manager alias="authenticationManager">
+        <!-- 配置账号密码所属的角色  角色以 ROLE_开头，为spring获取名称的标识 (xml方式的才需要)
+            user-service-ref="accountService" : 配置启动数据库方式获取用户和角色，xml失效
+         -->
+        <security:authentication-provider user-service-ref="accountService">
+            <security:password-encoder hash="md5"/>
+        </security:authentication-provider>
+    </security:authentication-manager>
+    <!-- 配置 验证过滤器, 此过滤器取代系统的XML权限过滤 , 此过滤器配置完毕之后存放到 系统缺省的过滤链中-->
+    <bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+        <!-- 需要认证管理器, 通过它可以获取 管理员已经拥有的角色信息  ，
+            由于id已经被org.springframework.security.authenticationManager默认了。不能更改，所以用别名-->
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <!-- 决策器 -->
+        <property name="accessDecisionManager" ref="roleAccessDecisionManager"/>
+        <!-- 配置urlService ，security可以通过url得到角色名称 -->
+        <property name="securityMetadataSource" ref="urlSecurityMetadataSource"/>
+    </bean>
+
+    <!--静态资源过滤-->
+    <security:http pattern="/static/**" security="none"/>
+    <security:http auto-config="false" use-expressions="true">
+        <security:anonymous enabled="false"/>
+        <security:headers>
+            <security:frame-options policy="SAMEORIGIN"/>
+        </security:headers>
+        <!-- 默认登录地址：j_spring_security_check -->
+        <security:form-login
+                login-page="/login"
+                login-processing-url="/auth"
+                authentication-success-handler-ref="loginSuccessHandler"
+                authentication-failure-url="/login?error=user.not.valid"
+                username-parameter="username"
+                password-parameter="passwd"
+        />
+        <!-- 注销也是由,Security框架来实现,LogoutFilter ,默认地址j_spring_security_logout   -->
+        <security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true"/>
+        <security:http-basic/>
+        <security:csrf disabled="true"/>
+        <security:session-management session-authentication-error-url="/login?error=login.repeat" invalid-session-url="/timeout">
+            <!-- max-sessions只容许一个账号登录，error-if-maximum-exceeded 后面账号登录后踢出前一个账号，expired-url session过期跳转界面 -->
+            <security:concurrency-control max-sessions="1" error-if-maximum-exceeded="false" expired-url="/login?error=login.repeat" session-registry-ref="sessionRegistry"/>
+            <!--禁止重复登录，拒绝后面的登录-->
+            <!--<security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true"/>-->
+        </security:session-management>
+        <!-- 增加权限过滤器,采用数据库方式获取权限 -->
+        <security:custom-filter ref="filterSecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR"/>
+        <security:access-denied-handler ref="myAuthenticationFailureHandler"/>
+    </security:http>
+    <bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/>
+    <!--配置web端使用权限控制-->
+    <bean id="webexpressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler"/>
+
+    <bean id="loginSuccessHandler" class="tv.huan.master.security.LoginSuccessHandler">
+        <property name="defaultTargetUrl" value="/main"/>
+        <property name="forwardToDestination" value="false"/>
+    </bean>
+</beans>

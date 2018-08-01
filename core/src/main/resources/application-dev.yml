@@ -1,0 +1,15 @@
+server:
+  port: 8080
+  context-path: /
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/master?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: root
+    password: admin
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    hibernate:
+      ddl-auto: update

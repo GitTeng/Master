@@ -1,0 +1,55 @@
+<%--
+  Created by IntelliJ IDEA.
+ * User: warriorr
+ * Mail: warriorr@163.com
+  Date: 2014/8/25
+  Time: 10:59
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ include file="/WEB-INF/jsp/taglib.jsp" %>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="${ctx}/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="${ctx}/static/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="${ctx}/static/plugins/bootstrap-table/bootstrap-table.css" rel="stylesheet">
+<link href="${ctx}/static/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+<link href="${ctx}/static/plugins/jquery-validation-1.14.0/css/screen.css" rel="stylesheet" media="screen">
+
+<script src="${ctx}/static/js/jquery.js" type="text/javascript"></script>
+<script src="${ctx}/static/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<%-- 此文件影响首页 关闭操作 的点击动作--%>
+<script src="${ctx}/static/js/main/tagging.min.js" type="text/javascript"></script>
+<script src="${ctx}/static/plugins/jquery-validation-1.14.0/jquery.validate.min.js"></script>
+<script src="${ctx}/static/plugins/jquery-validation-1.14.0/localization/messages_zh.min.js"></script>
+<script src="${ctx}/static/plugins/bootstrap-table/bootstrap-table.js"></script>
+<script src="${ctx}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<%--提示框--%>
+<script src="${ctx}/static/plugins/layer/layer.min.js"></script>
+<script src="${ctx}/static/plugins/toastr/toastr.min.js"></script>
+<link href="${ctx}/static/plugins/toastr/toastr.min.css" rel="stylesheet">
+
+<script type="text/javascript" src="${ctx}/static/plugins/datetimepicker/js/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+<script type="text/javascript" src="${ctx}/static/plugins/datetimepicker/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+
+<script src="${ctx}/static/js/config.js"></script>
+<script type="text/javascript" src="${ctx}/static/js/ajax.js" charset="UTF-8"></script>
+<script src="${ctx}/static/js/validatebox.js"></script>
+<script src="${ctx}/static/js/jquery.extend.js"></script>
+
+<%--提供 modal('hide'); 方法支持--%>
+<script src="${ctx}/static/js/common.js" type="text/javascript"></script>
+<script src="${ctx}/static/js/util.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    var ctx = '${ctx}';
+    $(document).ajaxComplete(function (event, obj, settings) {
+        if (obj.responseText == 'timeout') { //超时标识
+            window.top.location.href = '${ctx}/login?error=login.timeout'; //跳转到登录页面
+        }
+    });
+</script>
+<style>
+    .head_padding{padding: 15px}
+</style>
+

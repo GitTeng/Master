@@ -1,0 +1,38 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    platform: mysql
+    druid:
+      initial-size: 10
+      min-idle: 1
+      max-active: 200
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-open-prepared-statements: 20
+      max-pool-prepared-statement-per-connection-size: 20
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+      use-global-data-source-stat: true
+      filters: stat
+  jpa:
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+          current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+      hibernate:
+        naming:
+          #无修改命名
+#          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+          # 遇到大写字母 加”_”的命名
+          physical-strategy:  org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+logging:
+    config: classpath:log4j.properties
+
